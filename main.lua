@@ -4,8 +4,11 @@
 
     -- Main Program --
 
-    Author: Colton Ogden
+    Original Author: Colton Ogden
     cogden@cs50.harvard.edu
+
+    Updated By: Ashwin Rajani
+    rajani@g.harvard.edu
 
     Originally programmed by Atari in 1972. Features two
     paddles, controlled by players, with the goal of getting
@@ -48,7 +51,11 @@ VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
 -- paddle movement speed
-PADDLE_SPEED = 200
+HUMAN_PADDLE_SPEED = 200
+AI_PADDLE_SPEED = 100
+
+PADDLE_HEIGHT = 20
+BALL_DIAMETER = 4
 
 --[[
     Called just once at the beginning of the game; used to set up
@@ -90,11 +97,11 @@ function love.load()
 
     -- initialize our player paddles; make them global so that they can be
     -- detected by other functions and modules
-    player1 = Paddle(10, 30, 5, 20)
-    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
+    player1 = Paddle(10, 30, 5, PADDLE_HEIGHT)
+    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, PADDLE_HEIGHT)
 
     -- place a ball in the middle of the screen
-    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
+    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, BALL_DIAMETER, BALL_DIAMETER)
 
     -- initialize score variables
     player1Score = 0
@@ -233,19 +240,19 @@ function love.update(dt)
     -- paddles can move no matter what state we're in
     --
     -- player 1
-    if love.keyboard.isDown('w') then
-        player1.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('s') then
-        player1.dy = PADDLE_SPEED
+    if love.keyboard.isDown('up') then
+        player1.dy = -HUMAN_PADDLE_SPEED
+    elseif love.keyboard.isDown('down') then
+        player1.dy = HUMAN_PADDLE_SPEED
     else
         player1.dy = 0
     end
 
-    -- player 2
-    if love.keyboard.isDown('up') then
-        player2.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('down') then
-        player2.dy = PADDLE_SPEED
+    -- player 2 AI
+    if ball.y < player2.y + PADDLE_HEIGHT / 2 - BALL_DIAMETER / 2 then
+        player2.dy = -AI_PADDLE_SPEED
+    elseif ball.y > player2.y + PADDLE_HEIGHT / 2 + BALL_DIAMETER / 2 then
+        player2.dy = AI_PADDLE_SPEED
     else
         player2.dy = 0
     end
